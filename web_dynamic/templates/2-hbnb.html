@@ -10,10 +10,11 @@
     <link rel="icon" href="../static/images/icon.png" />
     <title>HBnB</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../static/scripts/1-hbnb.js?cache_id={{ cache_id }}" defer></script>
+    <script src="../static/scripts/2-hbnb.js" defer></script>
   </head>
   <body>
     <header>
+      <div id="api_status" class="circle">API Status</div> 
       <div class="logo"></div>
     </header>
     <div class="container">
@@ -43,8 +44,8 @@
 	    <ul>
 	      {% for amenity in amenities %}
 	      <li>
-                <input type="checkbox" style="margin-left: 10px;" data-id="{{ amenity.id }}" data-name="{{ amenity.name }}">
-                {{ amenity.name }}
+                <input type="checkbox" data-id="{{ amenity.id }}" data-name="{{ amenity.name }}">
+                <span style="margin-left: 10px;">{{ amenity.name }}</span> <!-- Checkbox with Amenity name -->
               </li>
 	      {% endfor %}
 	    </ul>

@@ -29,4 +29,22 @@ $(document).ready(function () {
     // Update the h4 tag inside the div Amenities with the list of Amenities checked
     updateAmenities();
   });
+  function checkAPIStatus () {
+    // Send GET request to API
+    $.get('http://0.0.0.0:5001/api/v1/status/', function (data, status) {
+      // If status is "OK", add class "available" to div#api_status
+      if (data.status === 'OK') {
+        $('#api_status').addClass('available');
+      } else {
+        // Otherwise, remove class "available"
+        $('#api_status').removeClass('available');
+      }
+    });
+  }
+
+  // Call checkAPIStatus function initially
+  checkAPIStatus();
+
+  // Call checkAPIStatus function every 5000 ms (5 seconds)
+  setInterval(checkAPIStatus, 5000);
 });
