@@ -1,0 +1,77 @@
+/* global $ */
+$(document).ready(function () {
+  // Dictionary to store Amenity IDs
+  const amenityIDs = {};
+
+  // Function to update the h4 tag with the list of Amenities checked
+  function updateAmenities() {
+    const checkedAmenities = Object.values(amenityIDs);
+    let amenitiesHTML = '';
+    for (const amenityName of checkedAmenities) {
+      amenitiesHTML += `<li>${amenityName}</li>`;
+    }
+    $('div.Amenities > ul').html(amenitiesHTML);
+  }
+
+  // Listen for changes on each input checkbox tag
+  $('input[type="checkbox"]').change(function () {
+    const amenityID = $(this).data('id');
+    const amenityName = $(this).data('name');
+
+    // If the checkbox is checked, store the Amenity ID in the dictionary
+    if ($(this).is(':checked')) {
+      amenityIDs[amenityID] = amenityName;
+    } else {
+      // If the checkbox is unchecked, remove the Amenity ID from the dictionary
+      delete amenityIDs[amenityID];
+    }
+
+    // Update the h4 tag inside the div Amenities with the list of Amenities checked
+    updateAmenities();
+  });
+  function checkAPIStatus () {
+    // Send GET request to API
+    $.get('http://0.0.0.0:5001/api/v1/status/', function (data, status) {
+      // If status is "OK", add class "available" to div#api_status
+      if (data.status === 'OK') {
+        $('#api_status').addClass('available');
+      } else {
+        // Otherwise, remove class "available"
+        $('#api_status').removeClass('available');
+      }
+    });
+  }
+
+  // Call checkAPIStatus function initially
+  checkAPIStatus();
+
+  // Call checkAPIStatus function every 5000 ms (5 seconds)
+  setInterval(checkAPIStatus, 5000);
+
+  $.ajax({
+    type: 'POST',
+    url: 'http://0.0.0.0:5001/api/v1/places_search/',
+    contentType: 'application/json',
+    data: JSON.stringify({}),
+    success: function (response) {
+      // Loop through the places data and create article tags
+      response.forEach(function (place) {
+        const article = '<article>' +
+                        '<div class="title_box">' +
+                          '<h2>' + place.name + '</h2>' +
+                          '<div class="price_by_night">$' + place.price_by_night + '</div>' +
+                        '</div>' +
+                        '<div class="information">' +
+                          '<div class="max_guest">' + place.max_guest + ' Guest' + (place.max_guest !== 1 ? 's' : '') + '</div>' +
+                          '<div class="number_rooms">' + place.number_rooms + ' Bedroom' + (place.number_rooms !== 1 ? 's' : '') + '</div>' +
+                          '<div class="number_bathrooms">' + place.number_bathrooms + ' Bathroom' + (place.number_bathrooms !== 1 ? 's' : '') + '</div>' +
+                        '</div>' +
+                        '<div class="description">' +
+                          place.description +
+                        '</div>' +
+                      '</article>';
+        $('.places').append(article);
+      });
+    }
+  });
+});
